@@ -32,6 +32,17 @@ def validate_lrt_B(dir_lrt):
     return list_out
 
 
+def validate_lrt_all(dir_lrt):
+    list_in = os.listdir(path=dir_lrt)
+    list_out = []
+    for lrt in list_in:
+        if lrt.endswith(".gz"):
+            list_out.append(dir_lrt + "\\" + lrt)
+            logging.info("Successfully obtained LRT: {}".format(lrt))
+    logging.info("Total LRTs obtained: {}\n".format(len(list_out)))
+    return list_out
+
+
 def gunzip_lrt(input_file):
     output_file = input_file.rstrip(".gz")
     with gzip.open(input_file, "rt") as fin:
@@ -75,3 +86,34 @@ def modify_lrt_sag(file_xml, tcontext, from_sag, to_sag):
     with open(file_xml, "wb") as f:
         f.write(xml_data)
     logging.info("Successfully modified LRT {}".format(file_xml))
+
+
+def validate_lrt_format(lrt):
+    try:
+        xmlschema = etree.XMLSchema(file="validate.xsd")
+        tree = etree.parse(lrt)
+    except etree.XMLSyntaxError as e:
+        e_str = str(e)
+        print(
+            "The file {} has syntax errors, first error found is: {}".format(
+                lrt, e_str.split("(")[0]
+            )
+        )
+        logging.critical(
+            "The file {} has syntax errors, first error found is: {}".format(
+                lrt, e_str.split("(")[0]
+            )
+        )
+    else:
+        if xmlschema.validate(tree):
+            print("The file {} is well formed and valid".format(lrt))
+            logging.info("The file {} is well formed and valid".format(lrt))
+            os.remove(lrt)
+        else:
+            try:
+                xmlschema.assertValid(tree)
+            except etree.DocumentInvalid as e:
+                print("The file {} is well formed but invalid: {}".format(lrt, e))
+                logging.error(
+                    "The file {} is well formed but invalid: {}".format(lrt, e)
+                )
