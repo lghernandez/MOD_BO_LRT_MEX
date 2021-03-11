@@ -117,3 +117,9 @@ def validate_lrt_format(lrt):
                 logging.error(
                     "The file {} is well formed but invalid: {}".format(lrt, e)
                 )
+
+
+def remove_file_by_extension(dir, exten):
+    for f in os.listdir(dir):
+        if f.endswith(exten):
+            os.remove(os.path.join(dir, f))
