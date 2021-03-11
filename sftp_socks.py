@@ -49,6 +49,21 @@ def download_lrt_all(host, l_path, r_path):
     mytransport.close()
 
 
+def download_lrt_all_with_logger(host, l_path, r_path, logger_name):
+    mysftp, mytransport = create_sftp_connection(host)
+    mysftp.chdir(r_path)
+    lrt_list = mysftp.listdir()
+    for lrt in lrt_list:
+        if lrt.endswith(".gz"):
+            r_file = r_path + "/" + lrt
+            l_file = l_path + "\\" + lrt
+            mysftp.get(r_file, l_file)
+            logging.info("Successfully downloaded LRT: {}".format(lrt))
+            print("Successfully downloaded LRT: {}".format(lrt))
+    mysftp.close()
+    mytransport.close()
+
+
 def upload_lrt_B(host, l_path, r_path):
     mysftp, mytransport = create_sftp_connection(host)
     mysftp.chdir(r_path)
