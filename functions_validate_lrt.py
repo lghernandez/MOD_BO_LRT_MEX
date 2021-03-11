@@ -37,14 +37,19 @@ def validate_lrt_all(dir_lrt, logger_name):
 
 def gunzip_lrt(input_file, logger_name):
     output_file = input_file.rstrip(".gz")
-    with gzip.open(input_file, "rt") as fin:
-        with open(output_file, "w") as fout:
-            fout.write(fin.read())
-    logger_name.info(
-        "Successfully gunzip file {} to file {}".format(input_file, output_file)
-    )
-    os.remove(input_file)
-    return output_file
+    try:
+        with gzip.open(input_file, "rt") as fin:
+            with open(output_file, "w") as fout:
+                fout.write(fin.read())
+        logger_name.info(
+            "Successfully gunzip file {} to file {}".format(input_file, output_file)
+        )
+        os.remove(input_file)
+        return output_file
+    except gzip.BadGzipFile as e:
+        logger_name.critical(
+            "The file {} is not in gzip format: {}".format(input_file, e)
+        )
 
 
 def validate_lrt_format(lrt, logger_name):
