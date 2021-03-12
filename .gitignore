@@ -3,3 +3,6 @@ venv
 __pycache__
 logs
 constants.py
+validate.xsd
+token.json
+credentials.json
