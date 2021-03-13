@@ -18,10 +18,11 @@ def create_custom_logger(logger_name, log_path):
         fmt="%(asctime)s - %(levelname)s : %(message)s",
         datefmt="%d/%m/%Y %H:%M:%S GMT%z",
     )
-    file_handler = logging.FileHandler(os.path.join(log_path, logname))
+    log_file = os.path.join(log_path, logname)
+    file_handler = logging.FileHandler(log_file)
     file_handler.setFormatter(log_format)
     logger.addHandler(file_handler)
-    return logger
+    return logger, log_file
 
 
 def validate_lrt_all(dir_lrt, logger_name):
