@@ -81,6 +81,61 @@ def create_message_with_attachment(sender, to, subject, message_text, file):
     return {"raw": base64.urlsafe_b64encode(message.as_bytes()).decode()}
 
 
+def create_message_html_with_attachment(
+    sender, to, subject, message_text, message_html, file
+):
+    """Create a message for an email.
+
+    Args:
+      sender: Email address of the sender.
+      to: Email address of the receiver.
+      subject: The subject of the email message.
+      message_text: The text of the email message.
+      file: The path to the file to be attached.
+
+    Returns:
+      An object containing a base64url encoded email object.
+    """
+    message = MIMEMultipart("alternative")
+    msg = MIMEText(message_text)
+    html = MIMEText(message_html, "html")
+    message.attach(msg)
+    message.attach(html)
+
+    content_type, encoding = mimetypes.guess_type(file)
+
+    if content_type is None or encoding is not None:
+        content_type = "application/octet-stream"
+    main_type, sub_type = content_type.split("/", 1)
+    if main_type == "text":
+        fp = open(file, "rb")
+        attach = MIMEText(fp.read(), _subtype=sub_type)
+        fp.close()
+    elif main_type == "image":
+        fp = open(file, "rb")
+        attach = MIMEImage(fp.read(), _subtype=sub_type)
+        fp.close()
+    elif main_type == "audio":
+        fp = open(file, "rb")
+        attach = MIMEAudio(fp.read(), _subtype=sub_type)
+        fp.close()
+    else:
+        fp = open(file, "rb")
+        attach = MIMEBase(main_type, sub_type)
+        attach.set_payload(fp.read())
+        fp.close()
+    filename = os.path.basename(file)
+    attach.add_header("Content-Disposition", "attachment", filename=filename)
+    msg_mixed = MIMEMultipart()
+    msg_mixed["to"] = to
+    msg_mixed["from"] = sender
+    msg_mixed["subject"] = subject
+    msg_mixed.attach(message)
+    msg_mixed.attach(attach)
+
+    return {"raw": base64.urlsafe_b64encode(msg_mixed.as_bytes()).decode()}
+
+
 def send_message(service, user_id, message):
     """Send an email message.
     Args:
