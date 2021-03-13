@@ -6,3 +6,5 @@ constants.py
 validate.xsd
 token.json
 credentials.json
+token-personal.json
+credentials-personal.json
