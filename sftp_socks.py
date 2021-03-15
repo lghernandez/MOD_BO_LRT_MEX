@@ -95,15 +95,18 @@ def upload_lrt_B(host, l_path, r_path):
 
 
 def upload_lrt_B_with_logger(host, l_path, r_path, logger_name):
-    mysftp, mytransport = create_sftp_connection(host)
-    mysftp.chdir(r_path)
     lrt_list = os.listdir(path=l_path)
-    for lrt in lrt_list:
-        if lrt.startswith("B") and lrt.endswith(".gz"):
-            r_file = r_path + "/" + lrt
-            l_file = l_path + "\\" + lrt
-            mysftp.put(l_file, r_file)
-            logger_name.info("Successfully uploaded LRT: {}".format(lrt))
-            print("Successfully uploaded LRT: {}".format(lrt))
-    mysftp.close()
-    mytransport.close()
+    if len(lrt_list) != 0:
+        mysftp, mytransport = create_sftp_connection(host)
+        mysftp.chdir(r_path)
+        for lrt in lrt_list:
+            if lrt.startswith("B") and lrt.endswith(".gz"):
+                r_file = r_path + "/" + lrt
+                l_file = l_path + "\\" + lrt
+                mysftp.put(l_file, r_file)
+                logger_name.info("Successfully uploaded LRT: {}".format(lrt))
+                print("Successfully uploaded LRT: {}".format(lrt))
+        mysftp.close()
+        mytransport.close()
+    else:
+        logger_name.info("Directory is empty no LRT for upload")
