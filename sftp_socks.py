@@ -34,6 +34,21 @@ def download_lrt_B(host, l_path, r_path):
     mytransport.close()
 
 
+def download_lrt_B_with_logger(host, l_path, r_path, logger_name):
+    mysftp, mytransport = create_sftp_connection(host)
+    mysftp.chdir(r_path)
+    lrt_list = mysftp.listdir()
+    for lrt in lrt_list:
+        if lrt.startswith("B") and lrt.endswith(".gz"):
+            r_file = r_path + "/" + lrt
+            l_file = l_path + "\\" + lrt
+            mysftp.get(r_file, l_file)
+            logger_name.info("Successfully downloaded LRT: {}".format(lrt))
+            print("Successfully downloaded LRT: {}".format(lrt))
+    mysftp.close()
+    mytransport.close()
+
+
 def download_lrt_all(host, l_path, r_path):
     mysftp, mytransport = create_sftp_connection(host)
     mysftp.chdir(r_path)
@@ -58,7 +73,7 @@ def download_lrt_all_with_logger(host, l_path, r_path, logger_name):
             r_file = r_path + "/" + lrt
             l_file = l_path + "\\" + lrt
             mysftp.get(r_file, l_file)
-            logging.info("Successfully downloaded LRT: {}".format(lrt))
+            logger_name.info("Successfully downloaded LRT: {}".format(lrt))
             print("Successfully downloaded LRT: {}".format(lrt))
     mysftp.close()
     mytransport.close()
@@ -74,6 +89,21 @@ def upload_lrt_B(host, l_path, r_path):
             l_file = l_path + "\\" + lrt
             mysftp.put(l_file, r_file)
             logging.info("Successfully uploaded LRT: {}".format(lrt))
+            print("Successfully uploaded LRT: {}".format(lrt))
+    mysftp.close()
+    mytransport.close()
+
+
+def upload_lrt_B_with_logger(host, l_path, r_path, logger_name):
+    mysftp, mytransport = create_sftp_connection(host)
+    mysftp.chdir(r_path)
+    lrt_list = os.listdir(path=l_path)
+    for lrt in lrt_list:
+        if lrt.startswith("B") and lrt.endswith(".gz"):
+            r_file = r_path + "/" + lrt
+            l_file = l_path + "\\" + lrt
+            mysftp.put(l_file, r_file)
+            logger_name.info("Successfully uploaded LRT: {}".format(lrt))
             print("Successfully uploaded LRT: {}".format(lrt))
     mysftp.close()
     mytransport.close()
