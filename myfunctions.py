@@ -137,13 +137,22 @@ def modify_lrt_sag_with_logger(file_xml, tcontext, from_sag, to_sag, logger_name
 
     logger_name.info("In total has been modified {} entries".format(n))
 
-    xml_data = etree.tostring(
-        tree, pretty_print=True, xml_declaration=True, encoding="UTF-8", standalone=True
-    )
+    if n != 0:
+        xml_data = etree.tostring(
+            tree,
+            pretty_print=True,
+            xml_declaration=True,
+            encoding="UTF-8",
+            standalone=True,
+        )
 
-    with open(file_xml, "wb") as f:
-        f.write(xml_data)
-    logger_name.info("Successfully modified LRT {}".format(file_xml))
+        with open(file_xml, "wb") as f:
+            f.write(xml_data)
+        logger_name.info("Successfully modified LRT {}".format(file_xml))
+        return n
+    else:
+        logger_name.info("Not need to modified LRT {}\n".format(file_xml))
+        return n
 
 
 def validate_lrt_format(lrt):
