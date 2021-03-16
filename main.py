@@ -23,12 +23,8 @@ from email_notification import (
 )
 from functions_validate_lrt import remove_file_by_extension, create_custom_logger
 from sftp_socks import download_lrt_B_with_logger, upload_lrt_B_with_logger
+from telegram_notifications import send_telegram_message
 import os, shutil
-
-# VSRS_MOD_B = {
-#     "vsrhkgeq3": "192.168.179.6",
-#     "vsrhkgeq4": "192.168.179.7",
-# }
 
 for vsr_name, vsr_ip in VSRS_MOD_B.items():
     vsr_logname = "MOD_B_" + vsr_name
@@ -64,3 +60,6 @@ for vsr_name, vsr_ip in VSRS_MOD_B.items():
         EMAIL_FROM, EMAIL_TO, EMAIL_SUBJECT, EMAIL_CONTENT, HTML_CONTENT, my_logfile
     )
     sent = send_message(service, "me", message)
+    send_telegram_message(
+        f"Task Completed:\nModification in B LRT finished - {vsr_name}\nCheck your mailbox"
+    )

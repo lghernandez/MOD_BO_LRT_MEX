@@ -20,6 +20,7 @@ from email_notification import (
     create_message_html_with_attachment,
     send_message,
 )
+from telegram_notifications import send_telegram_message
 import os
 
 for vsr_name, vsr_ip in VSRS.items():
@@ -40,3 +41,6 @@ for vsr_name, vsr_ip in VSRS.items():
         EMAIL_FROM, EMAIL_TO, EMAIL_SUBJECT, EMAIL_CONTENT, HTML_CONTENT, my_logfile
     )
     sent = send_message(service, "me", message)
+    send_telegram_message(
+        f"Task Completed:\nValidation LRT finished - {vsr_name}\nCheck your mailbox"
+    )
