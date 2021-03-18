@@ -36,8 +36,8 @@ for vsr_name, vsr_ip in VSRS_MOD_B.items():
     my_logger, my_logfile = create_custom_logger(vsr_logname, LOG_PATH)
     download_lrt_B_with_logger(vsr_ip, vsr_path, REMOTE_LRT_PATH, my_logger)
     list_B = validate_lrt_B_with_logger(vsr_path, my_logger)
+    n_lrt = 0
     for lrt in list_B:
-        n_lrt = 0
         my_logger.info(f"Working in LRT: {lrt}")
         lrt_0 = os.path.join(vsr_path, lrt)
         lrt_bk = os.path.join(vsr_backup_path, lrt)
